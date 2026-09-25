@@ -2,13 +2,13 @@
 to do:
 [x] fix fetching year and description
 [x] fix the projets filtering system
-[] adding the loading animation
 [x] fix the differnt views css
 [x] fix scroll bar
-[] fix mouse cursor
-[] fix the media stuff
 [x] add year to the projects
- [] figure out the gallery
+[x] fix mouse cursor
+[x] mobile view
+[] adding the loading animation
+
 //,.-------------------------------------------*/
 // ————————————————————————————————————————————————————————————
 // ————————————————————————————————————————————————————————————
@@ -39,7 +39,6 @@ async function init() {
   console.log(orderData.data);
   console.log(groupData.data);
   console.log(tags);
-  // generateProjects();
   generateFilters();
   renderGrid(projects, mainContainer);
   // addViewEvents();
@@ -124,7 +123,6 @@ async function mapProjects(res, cFilter) {
       }),
   );
 }
-function getChannelBlock(slug, conv) {}
 function checkTags(id) {
   let tempT = [];
   for (let t of tags) {
@@ -144,9 +142,7 @@ async function getAllTags(res) {
       tags.push(temp);
     }
   }
-  res.forEach((b) => {});
 }
-
 //thumbnail for the project
 async function getChannelinfo(slug) {
   const tempData = await getArenaChannel(slug, "contents");
@@ -162,10 +158,12 @@ async function getChannelinfo(slug) {
     .map((item) => item.attachment.url);
   const descBlock = tempData.data.find((i) => i.title === ".desc");
   const dateBlock = tempData.data.find((i) => i.title === ".deets");
-  //   console.log(firstImage);
   const lines = dateBlock ? dateBlock.content.plain.trim().split("\n") : "null";
   const mediums = lines.slice(0, -1);
   const year = lines.at(-1);
+  let allMedia;
+  if (media.length) allMedia = [...media, ...images];
+  else allMedia = [...images];
   return {
     thumbnail: firstImage.image.src,
     description: descBlock ? descBlock.content.plain : "null",
@@ -175,6 +173,7 @@ async function getChannelinfo(slug) {
     images: images,
     imagesSmall: imagesSmall,
     media: media,
+    allMedia: allMedia,
   };
 }
 // ————————————————————————————————————————————————————————————
@@ -187,55 +186,3 @@ function createFromHTML(html) {
   template.innerHTML = html.trim();
   return template.content.firstElementChild;
 }
-// ————————————————————————————————————————————————————————————
-// ————————————————————————————————————————————————————————————
-// ,, are.na helpers
-// ————————————————————————————————————————————————————————————
-// ————————————————————————————————————————————————————————————
-// async function getArenaGroup(id) {
-//   try {
-//     const response = await fetch(
-//       `https://api.are.na/v3/groups/${id}/contents?page=1&per=100&type=Channel`,
-//     );
-
-//     if (!response.ok) {
-//       throw new error(`http ${response.status}`);
-//     }
-//     const group = await response.json();
-
-//     return group;
-//   } catch (error) {
-//     console.error("error fetching are.na group:", error);
-//   }
-// }
-// // get channel
-// async function getArenaChannel(id, type) {
-//   try {
-//     const response = await fetch(
-//       `https://api.are.na/v3/channels/${id}${type ? `/${type}?per=100` : ""}`,
-//     );
-
-//     if (!response.ok) {
-//       throw new error(`http ${response.status}`);
-//     }
-//     const group = await response.json();
-
-//     return group;
-//   } catch (error) {
-//     console.error("error fetching are.na group:", error);
-//   }
-// }
-// async function getArenaConnect(id) {
-//   try {
-//     const response = await fetch(`https://api.are.na/v3/connections/${id}`);
-
-//     if (!response.ok) {
-//       throw new error(`http ${response.status}`);
-//     }
-//     const group = await response.json();
-
-//     return group;
-//   } catch (error) {
-//     console.error("error fetching are.na group:", error);
-//   }
-// }
