@@ -1,11 +1,16 @@
-import { getArenaChannel } from "./arenahelpers.js";
+/* -------------------------------------------
+[] navigation bar showing up
+[] selecting images generating them
+//-------------------------------------------*/
 
+import { getArenaChannel } from "./arenahelpers.js";
 let axisH;
 let axisHratio = 0.7;
 let galleryIndex = 0;
 let activeProject = null;
 let gridProjects;
 let mobileBreakPoint = 800;
+let windowWidth = window.innerWidth;
 /* -------------------------------------------
 __ grid renderings
 //,,-------------------------------------------*/
@@ -37,7 +42,7 @@ function generateGridProjects(projectList, projects) {
     <div class="p__tags">
     ${tagsHTML}
     <div class="p__left--year">${p.year ? p.year : ""}</div>
-    <img class="p__thumbimage" src="${p.thumbnail}"></div>
+    <img class="p__thumbimage" src="${p.imagesSmall[0]}"></div>
     </div>`);
     projectList.append(Ptemp);
     p.el = Ptemp;
@@ -60,7 +65,8 @@ function generateSliderProject(project) {
     : null;
   // add images + video
   const imgHTML = project.imagesSmall.map(
-    (item) => `<img src="${item}" class="info__img">`,
+    (item, index) =>
+      `<img src="${item}" data-index="${index}" class="info__img">`,
   );
   const tempSlider = createFromHTML2(
     `
@@ -83,7 +89,6 @@ function generateSliderProject(project) {
         </div>
         `,
   );
-
   return tempSlider;
 }
 
@@ -112,29 +117,32 @@ function moveGallery(direction, project) {
 function addImgBtnEvent(btn) {
   btn.addEventListener("click", (e) => {
     try {
-      if (window.innerWidth > mobileBreakPoint) {
-        let tempContainer = document.querySelector(".img__show--container");
-        let tempContainer2 = document.querySelector(".info__left");
-        tempContainer.classList.remove("active");
-        tempContainer2.style.display = "none";
-      } else {
-        let gg = document.querySelector(".projects--info--grid");
-        gg.innerHTML = "";
-        gg.classList.remove("active");
-      }
+      let gg = document.querySelector(".projects--info--grid");
+      let navBar = document.querySelector(".navigation--container");
+      gg.innerHTML = "";
+      gg.classList.remove("active");
+      navBar.classList.remove("active");
+      //close the
+      // if (window.innerWidth > mobileBreakPoint) {
+      //   let tempContainer = document.querySelector(".img__show--container");
+      //   let tempContainer2 = document.querySelector(".info__left");
+      //   tempContainer.classList.remove("active");
+      //   tempContainer2.style.display = "none";
+      // } else {
+      //   let gg = document.querySelector(".projects--info--grid");
+      //   gg.innerHTML = "";
+      //   gg.classList.remove("active");
+      // }
     } catch (er) {
       console.error("bang", er);
     }
   });
 }
-
 function checkVideo(url) {
   const extension = url.split(".").pop().split(/[?#]/)[0].toLowerCase();
-
   // Define known formats
   const imageExtensions = ["jpg", "jpeg", "png", "gif", "webp", "svg"];
   const videoExtensions = ["mp4", "webm", "ogg"];
-
   if (imageExtensions.includes(extension)) return "image";
   else if (videoExtensions.includes(extension)) return "video";
 }
@@ -149,6 +157,7 @@ function addImgShowEvent(imgs, project) {
     });
   });
 }
+function addSliderUpdatingImage() {}
 //add the thumbnail image when you select on a project
 // function addThumbnailEvent(project) {
 //   let tempContainer = document.querySelector(".img__show--container");
@@ -160,7 +169,7 @@ function addImgShowEvent(imgs, project) {
 __ event handelings
 //,,-------------------------------------------*/
 function addAllEvents() {
-  //projects--grid
+  // open slider when clicking on a project
   let tempProject = document.querySelector(".projects--grid");
   tempProject.addEventListener("click", (e) => {
     const project = e.target.closest(".p--container");
@@ -170,6 +179,7 @@ function addAllEvents() {
     initSlider(activeProject);
     //initslider, btn event, window event
   });
+  // changing images with arrow keys
   window.addEventListener("keyup", (e) => {
     if (e.repeat) return;
     let gallery = document.querySelector(".img__show--container.active");
@@ -183,15 +193,28 @@ function addAllEvents() {
       moveGallery(1, activeProject);
     }
   });
-}
 
+  // changing the images with the
+  let projectInfo = document.querySelector(".projects--info--grid");
+  projectInfo.addEventListener("click", (e) => {
+    const v = e.target.closest(".info__img");
+    if (!v || !activeProject) return;
+    let index = parseInt(v.dataset.index, 10);
+    galleryIndex = index + activeProject.media.length;
+    moveGallery(0, activeProject);
+  });
+}
+// create the slider
 function initSlider(project) {
   let gg = document.querySelector(".projects--info--grid");
   gg.classList.add("active");
   //clear what was there before
   gg.innerHTML = ``;
   gg.append(generateSliderProject(project));
+  let navBar = document.querySelector(".navigation--container");
+  if (windowWidth > mobileBreakPoint) navBar.classList.add("active");
   addImgBtnEvent(gg.querySelector(".img__show--btn"));
+  // play the video if its a video
   let v = gg.querySelector("#video__show.video");
   if (v) {
     // High-reliability autoplay properties
@@ -199,6 +222,7 @@ function initSlider(project) {
     v.muted = true; // Required by browsers to allow autoplay
     v.playsInline = true;
   }
+  // event for the image clicking
   let tempCheck = gg.querySelector(".img__show--container.active");
   if (tempCheck)
     tempCheck.addEventListener("click", (e) => moveGallery(1, activeProject));
@@ -209,7 +233,7 @@ function SliderObserver() {
   const source = document.querySelector(".projects--grid");
   const target = document.querySelector(".projects--info--grid");
   const target2 = document.querySelector(".img__show--container.active");
-  target.style.height = `${source.offsetHeight}px`;
+  target.style.height = `${source.offsetHeight + 100}px`;
   target2 ? (target2.style.height = `${source.offsetHeight}px`) : null;
   // const observer = new ResizeObserver(() => {
   //   target.style.height = `${source.offsetHeight}px`;

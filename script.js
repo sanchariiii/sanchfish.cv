@@ -7,6 +7,7 @@ to do:
 [x] add year to the projects
 [x] fix mouse cursor
 [x] mobile view
+[] make the close btn collapse all? 
 [] adding the loading animation
 
 //,.-------------------------------------------*/

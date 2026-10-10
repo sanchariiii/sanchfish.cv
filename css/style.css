@@ -104,9 +104,6 @@ body {
   background-size: cover;
   backdrop-filter: blur(5px);
   margin: 0;
-  cursor:
-    url("/c1.png") 15 15,
-    auto;
   transition: all 0.2s;
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -420,6 +417,7 @@ __ grid views projects
   width: 100%;
   height: fit-content;
   position: relative;
+  margin-bottom: 10rem;
 }
 .projects--grid .project__tags {
   font-size: 1.5rem;
@@ -668,11 +666,14 @@ __ hover states
 .p--container:hover {
   cursor: e-resize;
 }
-.img__show--container:hover,
 .filter__btn:hover {
   cursor: pointer;
 }
-
+.img__show--container:hover {
+  cursor:
+    url("../assets/arrow.svg") 60 60,
+    auto;
+}
 /* -------------------------------------------
 __ gallery stuff
 //,,-------------------------------------------*/
@@ -693,7 +694,40 @@ __ gallery stuff
 #video__show.image {
   display: none;
 }
-
+/* -------------------------------------------
+__ navigation
+//,,-------------------------------------------*/
+.navigation--container {
+  display: none;
+  width: 100%;
+  position: sticky;
+  pointer-events: none;
+  bottom: 0;
+  z-index: 100;
+}
+.navigation--container.active {
+  display: block;
+}
+.navigation__info {
+}
+.nav__info {
+  bottom: 0;
+  font-size: 1.8rem;
+  color: white;
+  display: flex;
+  justify-content: center;
+  background: var(--color-brownDark);
+  padding: 1rem;
+  color: var(--color-brownLight2);
+}
+.arrow__keys {
+  pointer-events: none;
+  padding: 0.2rem 0.5rem;
+  background: var(--color-brownLight2);
+  color: var(--color-brownDark);
+  border-radius: 30%;
+  margin: 0 01rem;
+}
 @keyframes waveFlow {
   from {
     background-position-y: 0;
